@@ -1,23 +1,36 @@
 package main
 
 import (
-    "net/http"
-    "encoding/xml"
-    "strings"
+  "encoding/xml"
+  "net/http"
+  "strings"
 )
 
-const VACATION_MODE = false // If set to true it will not open door (play dtmf tone), it will just play a msg saying you are not available
-const DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Phone number shown by the gate when someone calls
-const TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Twilio phone number, receiving the call, pointing to this endpoint
-const SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Your cellphone number, used to send you a SMS alert when someone comes in
-const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav" // Change to different .wav file depending on what's required for your gate
+/********** CONSTANT VARIABLES START **********/
+
+// If set to true it will not open door (play dtmf tone), it will just play a msg saying you are not available
+const VACATION_MODE = false
+
+// Phone number shown by the gate when someone calls
+const DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+
+// Twilio phone number, receiving the call, pointing to this endpoint
+const TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+
+// Your cellphone number, used to send you a SMS alert when someone comes in
+const SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+
+// Change to different .wav file depending on what's required for your gate
+const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav"
+
+/********** CONSTANT VARIABLES END **********/
 
 type TwiMLResponse struct {
-  XMLName xml.Name `xml:"Response"`
-  Say string `xml:"Say"`
-  Pause TwiMLPause `xml:"Pause"`
-  Play string `xml:"Play"`
-  SMS TwiMLSms `xml:"Sms"`
+  XMLName xml.Name   `xml:"Response"`
+  Say     string     `xml:"Say"`
+  Pause   TwiMLPause `xml:"Pause"`
+  Play    string     `xml:"Play"`
+  SMS     TwiMLSms   `xml:"Sms"`
 }
 
 type TwiMLPause struct {
@@ -25,8 +38,8 @@ type TwiMLPause struct {
 }
 
 type TwiMLSms struct {
-  From string `xml:"from,attr"`
-  To string `xml:"to,attr"`
+  From    string `xml:"from,attr"`
+  To      string `xml:"to,attr"`
   Message string `xml:",chardata"`
 }
 
@@ -42,14 +55,14 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
   var smsMessage string
   tone := OPEN_DOOR_DTMF_TONE
   pause := TwiMLPause{Length: 2}
-  
+
   if VACATION_MODE {
-  	message = "Not available at this time"
-  	tone = "" // No tone is played, door will not be opened
+    message = "Not available at this time"
+    tone = "" // No tone is played, door will not be opened
   } else {
     if strings.Contains(callerId, DOORGATE_NUMBER) {
-  	  message = "Opening door, please come in"
-  	  smsMessage = "Someone at the door."
+      message = "Opening door, please come in"
+      smsMessage = "Someone at the door."
     } else {
       message = "Please leave a message after the beep"
       smsMessage = "Non-gate number called."
