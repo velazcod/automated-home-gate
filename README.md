@@ -1,6 +1,10 @@
 Automated door opener for Twilio
 ================================
 
+If you live in a safe area that also requires a code to get in, and you don't want to answer the phone to let people in, let them come in, this will just simply play a DTMF dial tone (9 or 6), and let them in, and then it will send you a SMS alert to let you know someone is at the door and on their way to your home.
+
+Disclaimer: Not responsible for misuse or abuse from others or yourself. Use at your own risk.
+
 ## Configure
 
 * Open main.go
