@@ -6,10 +6,10 @@ import (
     "strings"
 )
 
-const VACATION_MODE = false
-const DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]"
-const TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
-const SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+const VACATION_MODE = false // If set to true it will not open door (play dtmf tone), it will just play a msg saying you are not available
+const DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Phone number shown by the gate when someone calls
+const TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Twilio phone number, receiving the call, pointing to this endpoint
+const SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]" // Your cellphone number, used to send you a SMS alert when someone comes in
 const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav" // Change to different .wav file depending on what's required for your gate
 
 type TwiMLResponse struct {
