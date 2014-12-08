@@ -25,12 +25,22 @@ const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav"
 
 /********** CONSTANT VARIABLES END **********/
 
+type TwiMLRejectResponse struct {
+  XMLName xml.Name    `xml:"Response"`
+  Reject  TwiMLReject `xml:"Reject"`
+  SMS     TwiMLSms   `xml:"Sms"`
+}
+
 type TwiMLResponse struct {
   XMLName xml.Name   `xml:"Response"`
   Say     string     `xml:"Say"`
   Pause   TwiMLPause `xml:"Pause"`
   Play    string     `xml:"Play"`
   SMS     TwiMLSms   `xml:"Sms"`
+}
+
+type TwiMLReject struct {
+  Reason string `xml:"reason,attr"`
 }
 
 type TwiMLPause struct {
@@ -56,28 +66,37 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
   tone := OPEN_DOOR_DTMF_TONE
   pause := TwiMLPause{Length: 2}
 
-  if VACATION_MODE {
-    message = "Not available at this time"
-    tone = "" // No tone is played, door will not be opened
+  if strings.Contains(callerId, DOORGATE_NUMBER) {
+    message = "Hello, opening door, please come in"
+    smsMessage = "Someone at the door."
   } else {
-    if strings.Contains(callerId, DOORGATE_NUMBER) {
-      message = "Opening door, please come in"
-      smsMessage = "Someone at the door."
-    } else {
-      message = "Please leave a message after the beep"
-      smsMessage = "Non-gate number called."
+    message = "Please leave a message after the beep"
+    smsMessage = "Non-gate number called."
+  }
+
+  var response []byte
+  var err error
+
+  if VACATION_MODE {
+    smsMessage = "Someone at the door but the call was rejected"
+    twimlsms := TwiMLSms{From: TWILIO_PHONE_NUMBER, To: SMS_ALERT_PHONE_NUMBER, Message: smsMessage}
+    twimlReject := TwiMLReject{Reason: "busy"}
+    twiml := TwiMLRejectResponse{Reject: twimlReject, SMS: twimlsms}
+    response, err = xml.MarshalIndent(twiml, "", "  ")
+    if err != nil {
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
+    }
+  } else {
+    twimlsms := TwiMLSms{From: TWILIO_PHONE_NUMBER, To: SMS_ALERT_PHONE_NUMBER, Message: smsMessage}
+    twiml := TwiMLResponse{Say: message, Pause: pause, Play: tone, SMS: twimlsms}
+    response, err = xml.MarshalIndent(twiml, "", "  ")
+    if err != nil {
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
     }
   }
 
-  twimlsms := TwiMLSms{From: TWILIO_PHONE_NUMBER, To: SMS_ALERT_PHONE_NUMBER, Message: smsMessage}
-  twiml := TwiMLResponse{Say: message, Pause: pause, Play: tone, SMS: twimlsms}
-
-  x, err := xml.MarshalIndent(twiml, "", "  ")
-  if err != nil {
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-    return
-  }
-
   w.Header().Set("Content-Type", "application/xml")
-  w.Write(x)
+  w.Write(response)
 }
