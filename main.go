@@ -28,7 +28,7 @@ const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav"
 type TwiMLRejectResponse struct {
   XMLName xml.Name    `xml:"Response"`
   Reject  TwiMLReject `xml:"Reject"`
-  SMS     TwiMLSms   `xml:"Sms"`
+  SMS     TwiMLSms    `xml:"Sms"`
 }
 
 type TwiMLResponse struct {
