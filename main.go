@@ -78,7 +78,7 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
   var err error
 
   if VACATION_MODE {
-    smsMessage = "Someone at the door but the call was rejected"
+    smsMessage = "Someone is at the door but the call was rejected"
     twimlsms := TwiMLSms{From: TWILIO_PHONE_NUMBER, To: SMS_ALERT_PHONE_NUMBER, Message: smsMessage}
     twimlReject := TwiMLReject{Reason: "busy"}
     twiml := TwiMLRejectResponse{Reject: twimlReject, SMS: twimlsms}
