@@ -71,7 +71,7 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
     smsMessage = "Someone at the door."
   } else {
     message = "Please leave a message after the beep"
-    smsMessage = "Non-gate number called."
+    smsMessage = "Non-gate number called: " + callerId
   }
 
   var response []byte
