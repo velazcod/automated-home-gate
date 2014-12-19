@@ -9,19 +9,19 @@ import (
 /********** CONSTANT VARIABLES START **********/
 
 // If set to true it will not open door (play dtmf tone), it will just play a msg saying you are not available
-const VACATION_MODE = false
+var VACATION_MODE = false
 
 // Phone number shown by the gate when someone calls
-const DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+var DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]"
 
 // Twilio phone number, receiving the call, pointing to this endpoint
-const TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+var TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
 
 // Your cellphone number, used to send you a SMS alert when someone comes in
-const SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+var SMS_ALERT_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
 
 // Change to different .wav file depending on what's required for your gate
-const OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav"
+var OPEN_DOOR_DTMF_TONE = "tones/dtmf9.wav"
 
 /********** CONSTANT VARIABLES END **********/
 
