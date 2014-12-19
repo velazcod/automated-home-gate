@@ -12,7 +12,7 @@ import (
 var VACATION_MODE = false
 
 // Phone number shown by the gate when someone calls
-var DOORGATE_NUMBER = "+1[INSERT_NUMBER_HERE]"
+var DOORGATE_NUMBERS = []string { "+1[INSERT_NUMBER_HERE]", "+1[INSERT_NUMBER_HERE]" }
 
 // Twilio phone number, receiving the call, pointing to this endpoint
 var TWILIO_PHONE_NUMBER = "+1[INSERT_NUMBER_HERE]"
@@ -66,7 +66,15 @@ func responseHandler(w http.ResponseWriter, r *http.Request) {
   tone := OPEN_DOOR_DTMF_TONE
   pause := TwiMLPause{Length: 2}
 
-  if strings.Contains(callerId, DOORGATE_NUMBER) {
+  foundNumber := false
+  for _, number := range DOORGATE_NUMBERS {
+    if strings.Contains(callerId, number) {
+      foundNumber = true
+      break
+    }
+  }
+
+  if foundNumber {
     message = "Hello, opening door, please come in"
     smsMessage = "Someone at the door."
   } else {
